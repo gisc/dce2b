@@ -1,5 +1,8 @@
 # Building a Second Brain with Agentic AI
 
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-live-brightgreen)](https://gisc.github.io/dce2b/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-gisc%2Fdce2b-black)](https://github.com/gisc/dce2b)
+
 Interactive e-learning course.
 
 ## How To Run
