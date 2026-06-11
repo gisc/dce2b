@@ -263,6 +263,36 @@ let paused=false;
 let activeNarrateToggleBtn=null;
 let activeNarrateStopBtn=null;
 function ttsSupported(){ return ("speechSynthesis" in window) && ("SpeechSynthesisUtterance" in window); }
+function preferredLang(){
+  const lang=(navigator.language||"en-US");
+  return typeof lang==="string" && lang ? lang : "en-US";
+}
+function pickVoice(voices){
+  if(!voices || !voices.length) return null;
+  const want=preferredLang().toLowerCase();
+  const want2=want.slice(0,2);
+  const scoreVoice=v=>{
+    const name=(v.name||"").toLowerCase();
+    const lang=(v.lang||"").toLowerCase();
+    let s=0;
+    if(lang===want) s+=6;
+    else if(lang.startsWith(want2)) s+=4;
+    else if(want2==="en" && lang.startsWith("en")) s+=3;
+    if(v.default) s+=1;
+    if(v.localService) s+=1;
+    if(/natural|neural|premium|enhanced|online/.test(name)) s+=3;
+    if(/aria|jenny|samantha|zira|susan|amy|emma|ava|serena/.test(name)) s+=1;
+    if(/male|fred/.test(name)) s-=1;
+    return s;
+  };
+  let best=null;
+  let bestScore=-1e9;
+  voices.forEach(v=>{
+    const s=scoreVoice(v);
+    if(s>bestScore){ best=v; bestScore=s; }
+  });
+  return best;
+}
 function syncNarrateUI(){
   const t=activeNarrateToggleBtn;
   const s=activeNarrateStopBtn;
@@ -307,7 +337,13 @@ function speak(text,btnToggle,btnStop){
   const start=()=>{
     stopSpeak();
     const u=new SpeechSynthesisUtterance(clean);
-    u.rate=1.02; u.pitch=1;
+    const voices=synth.getVoices();
+    const voice=pickVoice(voices);
+    u.lang = (voice && voice.lang) ? voice.lang : preferredLang();
+    if(voice) u.voice = voice;
+    u.volume = 1;
+    u.rate = 1.08;
+    u.pitch = 1.12;
     speaking=true; paused=false; activeNarrateToggleBtn=btnToggle; activeNarrateStopBtn=btnStop;
     if(btnToggle){ btnToggle.disabled=false; btnToggle.title=""; }
     if(btnStop){ btnStop.title="Stop narration"; }
