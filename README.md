@@ -28,3 +28,6 @@ Open `index.html` in any modern web browser.
 
 - Keep both files in the same folder so the links work.
 - Based on Andrej Karpathy's LLM Wiki pattern and Hermes Agent from Nous Research.
+
+## Reference
+- https://mbassit.com/en/blog/how-to-make-html-content-scorm-compatible-a-step-by-step-guide/
