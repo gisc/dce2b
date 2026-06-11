@@ -26,7 +26,7 @@ class SCORM12API {
         if (this.API) {
             this.initialize();
         } else {
-            console.error('SCORM API not found');
+            console.warn('SCORM API not found');
         }
     }
 
@@ -49,7 +49,7 @@ class SCORM12API {
 
 
                 if (findAttempts > maxAttempts) {
-                    console.error('SCORM API not found after maximum attempts');
+                    console.warn('SCORM API not found after maximum attempts');
                     return;
                 }
 
