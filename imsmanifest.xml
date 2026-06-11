@@ -1,0 +1,36 @@
+<?xml version="1.0" standalone="no"?>
+<manifest identifier="AI_Agent_with_Hermes_1781174826778" version="1"
+          xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2"
+          xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>1.2</schemaversion>
+  </metadata>
+	<organizations default="default_org">
+		<organization identifier="default_org">
+			<title>AI Agent with Hermes</title>
+      <item identifier="sco_1" identifierref="sco_1_res">
+        <title>index</title>
+      </item>
+      <item identifier="sco_2" identifierref="sco_2_res">
+        <title>overview</title>
+      </item>
+		</organization>
+	</organizations>
+	<resources>
+    <resource identifier="sco_1_res" type="webcontent" adlcp:scormtype="sco" href="index.html">
+      <file href="index.html"/>
+      <dependency identifierref="common_files"/>
+    </resource>
+    <resource identifier="sco_2_res" type="webcontent" adlcp:scormtype="sco" href="overview.html">
+      <file href="overview.html"/>
+      <dependency identifierref="common_files"/>
+    </resource>
+    <resource identifier="common_files" type="webcontent" adlcp:scormtype="asset">
+
+      <file href="scorm-1.2.js"/>
+    </resource>
+	</resources>
+</manifest>
