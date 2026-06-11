@@ -217,6 +217,7 @@ function show(id){
   stopSpeak();
   stage.innerHTML = screens[id]();
   (after[id]||function(){})();
+  bindNarrationButtons();
   renderHud();
   window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -258,20 +259,65 @@ function renderHud(){
 
 /* ---------------- Web Speech narration ---------------- */
 let speaking=false;
-function stopSpeak(){ try{window.speechSynthesis.cancel();}catch(e){} speaking=false; }
+let activeNarrateBtn=null;
+function ttsSupported(){ return ("speechSynthesis" in window) && ("SpeechSynthesisUtterance" in window); }
+function stopSpeak(){
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  speaking=false;
+  if(activeNarrateBtn) activeNarrateBtn.textContent="🔊 Narrate";
+  activeNarrateBtn=null;
+}
 function speak(text,btn){
-  if(!("speechSynthesis" in window)){ return; }
-  if(speaking){ stopSpeak(); if(btn) btn.textContent="🔊 Narrate"; return; }
-  const u=new SpeechSynthesisUtterance(text.replace(/[“”]/g,'"'));
-  u.rate=1.02; u.pitch=1; speaking=true; if(btn) btn.textContent="⏹ Stop";
-  u.onend=()=>{ speaking=false; if(btn) btn.textContent="🔊 Narrate"; };
-  window.speechSynthesis.speak(u);
+  if(!ttsSupported()){
+    if(btn){ btn.disabled=true; btn.textContent="🔇 Narration"; btn.title="Narration not supported in this browser/LMS"; }
+    return;
+  }
+  if(speaking){ stopSpeak(); }
+  const clean=(text||"").replace(/[“”]/g,'"').replace(/\s+/g," ").trim();
+  if(!clean){ return; }
+  const synth=window.speechSynthesis;
+  const start=()=>{
+    stopSpeak();
+    const u=new SpeechSynthesisUtterance(clean);
+    u.rate=1.02; u.pitch=1;
+    speaking=true; activeNarrateBtn=btn;
+    if(btn){ btn.textContent="⏹ Stop"; btn.disabled=false; }
+    u.onend=()=>{ speaking=false; if(activeNarrateBtn) activeNarrateBtn.textContent="🔊 Narrate"; activeNarrateBtn=null; };
+    u.onerror=()=>{ speaking=false; if(activeNarrateBtn) activeNarrateBtn.textContent="🔊 Narrate"; activeNarrateBtn=null; };
+    try{ synth.cancel(); }catch(e){}
+    synth.speak(u);
+  };
+  try{
+    const voices=synth.getVoices();
+    if(voices && voices.length){ start(); return; }
+    let armed=false;
+    const onVoices=()=>{
+      if(armed) return;
+      armed=true;
+      synth.removeEventListener("voiceschanged",onVoices);
+      start();
+    };
+    synth.addEventListener("voiceschanged",onVoices);
+    setTimeout(onVoices,250);
+  }catch(e){ start(); }
+}
+function bindNarrationButtons(){
+  const btns=[...stage.querySelectorAll("[data-narrate]")];
+  if(!btns.length) return;
+  if(!ttsSupported()){
+    btns.forEach(b=>{ b.disabled=true; b.textContent="🔇 Narration"; b.title="Narration not supported in this browser/LMS"; });
+    return;
+  }
+  btns.forEach(b=>{
+    b.disabled=false;
+    b.onclick=()=>speak(b.dataset.t,b);
+  });
 }
 
 /* ---------------- helpers to build markup ---------------- */
 function vo(text){
   return '<div class="vo"><span class="ico">🤖</span><p>'+text+'</p>'+
-    '<button class="btn ghost sm speak" onclick="speak(this.dataset.t,this)" data-t="'+
+    '<button class="btn ghost sm speak" type="button" data-narrate data-t="'+
     text.replace(/"/g,'&quot;')+'">🔊 Narrate</button></div>';
 }
 function head(tag,tagClass,title,sub){
