@@ -2,10 +2,13 @@
 <html lang="en"><head><meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Course Map — Building a Second Brain with Agentic AI</title>
+<meta name="color-scheme" content="dark light"/>
+<script src="theme.js"></script>
 <style>
- :root{--bg:#15151c;--panel:#23232f;--panel2:#2b2b3a;--ink:#ECECF2;--mut:#9a9ab0;--line:#383848;--purple:#9D6BFF;--teal:#2BD4C4}
+ :root{--bg:#15151c;--panel:#23232f;--panel2:#2b2b3a;--ink:#ECECF2;--mut:#9a9ab0;--line:#383848;--purple:#9D6BFF;--teal:#2BD4C4;--bg-accent:#241b3a;--shadow:0 10px 40px rgba(0,0,0,.45)}
+ :root[data-theme="light"]{--bg:#f6f7fb;--panel:#ffffff;--panel2:#f0f1f6;--ink:#15151c;--mut:#5c5c74;--line:#d6d7e0;--bg-accent:#dfe7ff;--shadow:0 10px 30px rgba(0,0,0,.12)}
  *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-   background:radial-gradient(1200px 700px at 70% -10%,#241b3a 0%,var(--bg) 55%) fixed;color:var(--ink);min-height:100vh}
+   background:radial-gradient(1200px 700px at 70% -10%,var(--bg-accent) 0%,var(--bg) 55%) fixed;color:var(--ink);min-height:100vh}
  .wrap{max-width:1100px;margin:0 auto;padding:18px 18px 60px}
  .bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:rgba(35,35,47,.7);backdrop-filter:blur(8px);
    border:1px solid var(--line);border-radius:14px;padding:10px 14px;position:sticky;top:10px;z-index:10}
@@ -14,7 +17,7 @@
    color:#fff;background:linear-gradient(180deg,var(--purple),#5B2A9E)} .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
  h1{font-size:24px;margin:18px 2px 2px}.lead{color:var(--mut);margin:0 2px 8px;font-size:14.5px}
  .panel{background:linear-gradient(180deg,var(--panel),#1d1d27);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:14px;
-   box-shadow:0 10px 40px rgba(0,0,0,.45)} svg{width:100%;height:auto;display:block}
+   box-shadow:var(--shadow)} svg{width:100%;height:auto;display:block}
  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
  @media(max-width:760px){.grid{grid-template-columns:1fr}}
  .box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
@@ -31,6 +34,7 @@
  <div class="bar">
    <div class="brand">🗺 Course Map · <b>Second Brain Sim</b></div>
    <div class="spacer"></div>
+   <button class="btn ghost" type="button" data-theme-toggle title="Toggle light/dark mode">☀️ Light</button>
    <a class="btn" href="index.html">← Back to simulation</a>
  </div>
  <h1>Learning activities &amp; branching logic</h1>

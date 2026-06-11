@@ -31,6 +31,7 @@
     <resource identifier="common_files" type="webcontent" adlcp:scormtype="asset">
 
       <file href="scorm-1.2.js"/>
+      <file href="theme.js"/>
     </resource>
 	</resources>
 </manifest>

@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="dark light" />
 <title>Building a Second Brain with Agentic AI — Interactive Simulation</title>
+<script src="theme.js"></script>
 <style>
   :root{
     --bg:#15151c; --bg2:#1d1d27; --panel:#23232f; --panel2:#2b2b3a;
@@ -11,12 +13,33 @@
     --purple:#9D6BFF; --purple-d:#5B2A9E; --teal:#2BD4C4; --teal-d:#0E7C86;
     --good:#39C26B; --warn:#E0922F; --bad:#E5556E;
     --radius:16px; --shadow:0 10px 40px rgba(0,0,0,.45);
+    --bg-accent:#241b3a;
+    --opt-hover-bg:#30304180;
+    --opt-sel-bg:linear-gradient(180deg,#3a2f55,#2c2740);
+    --layer-p:#e7e7ef;
+    --bin-bg:#1c1c27;
+    --bin-over-bg:#15201f;
+    --code-ink:#dcdce8;
+    --summary-bg:#16201f;
+  }
+  :root[data-theme="light"]{
+    --bg:#f6f7fb; --bg2:#ffffff; --panel:#ffffff; --panel2:#f0f1f6;
+    --ink:#15151c; --mut:#5c5c74; --line:#d6d7e0;
+    --shadow:0 10px 30px rgba(0,0,0,.12);
+    --bg-accent:#dfe7ff;
+    --opt-hover-bg:rgba(0,0,0,.04);
+    --opt-sel-bg:linear-gradient(180deg,#efe9ff,#e6ddff);
+    --layer-p:var(--ink);
+    --bin-bg:#ffffff;
+    --bin-over-bg:#e8fff7;
+    --code-ink:#2a2a33;
+    --summary-bg:#e8fff7;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:radial-gradient(1200px 700px at 70% -10%,#241b3a 0%,var(--bg) 55%) fixed;
+    background:radial-gradient(1200px 700px at 70% -10%,var(--bg-accent) 0%,var(--bg) 55%) fixed;
     color:var(--ink); min-height:100vh; line-height:1.5;
   }
   .wrap{max-width:920px;margin:0 auto;padding:18px 18px 60px}
@@ -68,14 +91,14 @@
     border:1px solid rgba(43,212,196,.25);border-left:3px solid var(--teal);
     border-radius:12px;padding:13px 15px;margin:16px 0 20px}
   .vo .ico{font-size:18px;flex:0 0 auto;margin-top:1px}
-  .vo p{margin:0;font-size:15px;color:#dfeeec}
+  .vo p{margin:0;font-size:15px;color:var(--ink)}
   .vo .speak{margin-left:auto;flex:0 0 auto}
   /* options */
   .opts{display:flex;flex-direction:column;gap:11px;margin:6px 0 4px}
   .opt{display:flex;gap:13px;align-items:center;text-align:left;cursor:pointer;
     background:var(--panel2);border:1.5px solid var(--line);border-radius:13px;padding:15px 16px;transition:.12s}
-  .opt:hover{border-color:var(--purple);background:#30304180}
-  .opt.sel{border-color:var(--purple);background:linear-gradient(180deg,#3a2f55,#2c2740);box-shadow:0 0 0 3px rgba(157,107,255,.18)}
+  .opt:hover{border-color:var(--purple);background:var(--opt-hover-bg)}
+  .opt.sel{border-color:var(--purple);background:var(--opt-sel-bg);box-shadow:0 0 0 3px rgba(157,107,255,.18)}
   .opt .mark{width:22px;height:22px;border-radius:999px;border:2px solid var(--mut);flex:0 0 auto;display:grid;place-items:center}
   .opt.sel .mark{border-color:var(--purple)} .opt.sel .mark::after{content:"";width:11px;height:11px;border-radius:999px;background:var(--purple)}
   .opt .ttl{font-weight:680;font-size:15px} .opt .desc{color:var(--mut);font-size:13px;margin-top:2px}
@@ -88,14 +111,14 @@
   .layer.good{background:rgba(57,194,107,.10);border-color:rgba(57,194,107,.4)}
   .layer h3{margin:0 0 6px;font-size:15px;letter-spacing:.3px}
   .layer.warn h3{color:#f3b46a} .layer.bad h3{color:#f08097} .layer.good h3{color:#7be0a0}
-  .layer p{margin:0 0 10px;font-size:14.5px;color:#e7e7ef}
+  .layer p{margin:0 0 10px;font-size:14.5px;color:var(--layer-p)}
   /* activity: sort bins */
   .pool{display:flex;flex-wrap:wrap;gap:9px;margin:6px 0 16px;min-height:10px}
   .chip{background:var(--panel2);border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13.5px;cursor:grab;user-select:none}
   .chip:active{cursor:grabbing} .chip.placed{opacity:.5}
   .bins{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .bin{background:#1c1c27;border:2px dashed var(--line);border-radius:13px;padding:13px;min-height:130px;transition:.12s}
-  .bin.over{border-color:var(--teal);background:#15201f}
+  .bin{background:var(--bin-bg);border:2px dashed var(--line);border-radius:13px;padding:13px;min-height:130px;transition:.12s}
+  .bin.over{border-color:var(--teal);background:var(--bin-over-bg)}
   .bin h4{margin:0 0 8px;font-size:13.5px;color:var(--teal);font-family:Consolas,monospace}
   .bin .slot{display:flex;flex-wrap:wrap;gap:7px}
   .bin .chip{cursor:pointer;font-size:12.5px;padding:7px 10px}
@@ -109,7 +132,7 @@
   /* activity: review */
   .rev{display:flex;flex-direction:column;gap:11px;margin:4px 0 6px}
   .rev .item{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:13px 14px}
-  .rev .item .src{font-family:Consolas,monospace;font-size:13px;color:#dcdce8;margin-bottom:9px;white-space:pre-wrap}
+  .rev .item .src{font-family:Consolas,monospace;font-size:13px;color:var(--code-ink);margin-bottom:9px;white-space:pre-wrap}
   .rev .item .src .inj{color:#f08097}
   .rev .choose{display:flex;gap:8px}
   .rev .choose button{flex:1;cursor:pointer;border-radius:9px;padding:8px;font-weight:700;font-size:13px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink)}
@@ -117,7 +140,7 @@
   .rev .choose button.reject.on{background:rgba(229,85,110,.2);border-color:var(--bad);color:#f5a9b7}
   /* ending */
   .badge{display:inline-block;font-size:13px;font-weight:800;letter-spacing:.5px;padding:8px 15px;border-radius:999px;margin-bottom:6px}
-  .summary{font-family:Consolas,monospace;font-size:13px;color:var(--teal);background:#16201f;border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin:14px 0;word-break:break-word}
+  .summary{font-family:Consolas,monospace;font-size:13px;color:var(--teal);background:var(--summary-bg);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin:14px 0;word-break:break-word}
   .net{font-size:54px;text-align:center;margin:6px 0 2px}
   /* inspector */
   .inspect{margin-top:22px;border-top:1px dashed var(--line);padding-top:12px}
@@ -138,6 +161,7 @@
     <div class="spacer"></div>
     <div class="pill" id="stepPill">Start</div>
     <div class="pill">Score <b id="scorePill">0</b></div>
+    <button class="btn ghost sm" type="button" data-theme-toggle title="Toggle light/dark mode">☀️ Light</button>
     <a class="btn ghost sm" href="overview.html" title="See the branching map">🗺 Map</a>
     <button class="btn ghost sm" id="restartBtn">↺ Restart</button>
   </div>
