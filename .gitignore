@@ -1,0 +1,19 @@
+# --- build / scratch artifacts (generators & preview renders) ---
+build_*.py
+build_*.js
+_*.png
+*.tmp
+*.bak
+*.log
+
+# --- editor / OS junk ---
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# --- dependencies ---
+node_modules/
+
+# Note: docs/ and visual/ (the published site + maps) and *.zip deliverables
+# are intentionally tracked and NOT ignored.
