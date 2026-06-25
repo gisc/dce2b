@@ -141,7 +141,11 @@
   .bin .chip{cursor:pointer;font-size:12.5px;padding:7px 10px}
   /* activity: sequence */
   .seq{display:flex;flex-direction:column;gap:8px;margin:4px 0 8px}
-  .seq .row{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+  .seq .row{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:10px 12px;cursor:grab}
+  .seq .row:active{cursor:grabbing}
+  .seq .row.dragging{opacity:.45}
+  .seq .row.over{border-color:var(--teal);box-shadow:inset 0 0 0 1px var(--teal)}
+  .seq .row .grip{color:var(--mut);font-size:16px;line-height:1;flex:0 0 auto;user-select:none}
   .seq .row .num{width:24px;height:24px;border-radius:7px;background:var(--purple-d);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;flex:0 0 auto}
   .seq .row .txt{flex:1;font-size:13.5px} .seq .row.ok{border-color:var(--good)} .seq .row.no{border-color:var(--bad)}
   .seq .mv{display:flex;flex-direction:column;gap:3px}
@@ -550,7 +554,7 @@ la2(){return '<div class="card">'+
   '<div class="seq" id="seq"></div>'+
   '<div class="actions"><button class="btn teal" id="checkBtn" onclick="checkLA2()">Check order</button>'+
   '<button class="btn" id="contBtn" disabled onclick="show(\'dp4\')">Continue →</button>'+
-  '<span class="hint" id="la2hint">Use ↑ / ↓ to reorder.</span></div>'+
+  '<span class="hint" id="la2hint">Drag a row, or use ↑ / ↓, to reorder.</span></div>'+
 '</div>';},
 
 dp4(){return '<div class="card">'+
@@ -846,14 +850,20 @@ after.la2=function(){
   la2order=shuffle(LA2_CORRECT.map(x=>x.k));
   renderSeq();
 };
+let la2drag=null;
 function renderSeq(){
   const box=document.getElementById('seq'); box.innerHTML="";
   la2order.forEach((k,i)=>{
     const item=LA2_CORRECT.find(x=>x.k===k);
-    const row=document.createElement('div'); row.className="row";
-    row.innerHTML='<div class="num">'+(i+1)+'</div><div class="txt">'+item.t+'</div>'+
+    const row=document.createElement('div'); row.className="row"; row.draggable=true; row.dataset.i=i;
+    row.innerHTML='<div class="grip">⠿</div><div class="num">'+(i+1)+'</div><div class="txt">'+item.t+'</div>'+
       '<div class="mv"><button '+(i===0?'disabled':'')+' onclick="moveSeq('+i+',-1)">▲</button>'+
       '<button '+(i===la2order.length-1?'disabled':'')+' onclick="moveSeq('+i+',1)">▼</button></div>';
+    row.addEventListener('dragstart',e=>{ la2drag=i; row.classList.add('dragging'); if(e.dataTransfer){e.dataTransfer.effectAllowed='move'; try{e.dataTransfer.setData('text/plain',String(i));}catch(_){}} });
+    row.addEventListener('dragend',()=>{ box.querySelectorAll('.row').forEach(r=>r.classList.remove('over','dragging')); });
+    row.addEventListener('dragover',e=>{ e.preventDefault(); row.classList.add('over'); });
+    row.addEventListener('dragleave',()=>row.classList.remove('over'));
+    row.addEventListener('drop',e=>{ e.preventDefault(); const to=+row.dataset.i; if(la2drag===null||la2drag===to) return; const m=la2order.splice(la2drag,1)[0]; la2order.splice(to,0,m); la2drag=null; renderSeq(); });
     box.appendChild(row);
   });
 }
